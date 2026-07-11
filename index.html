@@ -6,15 +6,38 @@
     <title>EquiAnatomy 3D</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+      }
+    }
+    </script>
 </head>
 <body>
 
-<div>
-    <h1>🐎 EquiAnatomy 3D</h1>
-    <p>Bienvenido a la aplicación de anatomía equina.</p>
+<div id="app">
+
+    <aside id="menu">
+        <h2>🐎 EquiAnatomy 3D</h2>
+
+        <button>💀 Sistema óseo</button>
+        <button>💪 Sistema muscular</button>
+        <button>🫁 Sistema respiratorio</button>
+        <button>🍽️ Sistema digestivo</button>
+        <button>❤️ Sistema circulatorio</button>
+        <button>🧠 Sistema nervioso</button>
+        <button>🚻 Sistema reproductor</button>
+    </aside>
+
+    <main id="viewer">
+        <div id="canvas3d"></div>
+    </main>
+
 </div>
 
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 
 </body>
 </html>
