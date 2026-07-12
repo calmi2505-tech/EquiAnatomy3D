@@ -1,38 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EquiAnatomy 3D</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EquiAnatomy 3D</title>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 
-    <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-      }
-    }
-    </script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
 </head>
+
 <body>
 
 <div id="app">
 
     <aside id="menu">
+
         <h2>🐎 EquiAnatomy 3D</h2>
 
-        <button id="btnSkeleton">💀 Sistema óseo</button>
-        <button id="btnMuscles">💪 Sistema muscular</button>
-        <button id="btnResp">🫁 Sistema respiratorio</button>
-        <button id="btnDigestive">🍽️ Sistema digestivo</button>
-        <button id="btnCirculatory">❤️ Sistema circulatorio</button>
-        <button id="btnNervous">🧠 Sistema nervioso</button>
+        <button>💀 Sistema Óseo</button>
+        <button>💪 Sistema Muscular</button>
+        <button>🫁 Sistema Respiratorio</button>
+        <button>🍽 Sistema Digestivo</button>
+        <button>❤️ Sistema Circulatorio</button>
+        <button>🧠 Sistema Nervioso</button>
+
     </aside>
 
     <main id="viewer">
+
         <div id="canvas3d"></div>
+
     </main>
 
 </div>
