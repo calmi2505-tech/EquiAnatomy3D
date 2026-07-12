@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 const container = document.getElementById("canvas3d");
 
@@ -14,7 +16,7 @@ const camera = new THREE.PerspectiveCamera(
     1000
 );
 
-camera.position.set(0, 2, 5);
+camera.position.set(0, 2, 6);
 
 // Renderizador
 const renderer = new THREE.WebGLRenderer({
@@ -22,57 +24,85 @@ const renderer = new THREE.WebGLRenderer({
 });
 
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(
-    window.innerWidth - 280,
-    window.innerHeight
-);
+renderer.setSize(window.innerWidth - 280, window.innerHeight);
 
 container.innerHTML = "";
 container.appendChild(renderer.domElement);
 
-// Luz ambiente
-const ambient = new THREE.AmbientLight(0xffffff, 3);
-scene.add(ambient);
+// Luces
+scene.add(new THREE.AmbientLight(0xffffff, 2));
 
-// Luz direccional
 const light = new THREE.DirectionalLight(0xffffff, 3);
-light.position.set(5, 10, 5);
+light.position.set(10, 10, 10);
 scene.add(light);
 
-// Ejes
-const axes = new THREE.AxesHelper(5);
-scene.add(axes);
+// Controles
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.enablePan = true;
 
-// Suelo
-const plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(20, 20),
-    new THREE.MeshStandardMaterial({
-        color: 0x666666,
-        side: THREE.DoubleSide
-    })
+// Cargar caballo
+const loader = new GLTFLoader();
+
+loader.load(
+    "./Horse.glb",
+
+    (gltf) => {
+
+        const horse = gltf.scene;
+
+        // Calcular tamaño
+        const box = new THREE.Box3().setFromObject(horse);
+
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+
+        // Centrar modelo
+        horse.position.sub(center);
+
+        // Escalar automáticamente
+        const maxAxis = Math.max(size.x, size.y, size.z);
+        const scale = 4 / maxAxis;
+
+        horse.scale.setScalar(scale);
+
+        scene.add(horse);
+
+        controls.target.set(0, 1, 0);
+        controls.update();
+
+        console.log("Horse.glb cargado correctamente");
+
+    },
+
+    (xhr) => {
+
+        if (xhr.total) {
+
+            console.log(
+                Math.round(xhr.loaded / xhr.total * 100) + "%"
+            );
+
+        }
+
+    },
+
+    (error) => {
+
+        console.error(error);
+
+        alert("No se pudo cargar Horse.glb");
+
+    }
+
 );
-
-plane.rotation.x = -Math.PI / 2;
-scene.add(plane);
-
-// Cubo rojo
-const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshStandardMaterial({
-        color: 0xff0000
-    })
-);
-
-cube.position.set(0, 0.5, 0);
-scene.add(cube);
 
 // Animación
 function animate() {
 
     requestAnimationFrame(animate);
 
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+    controls.update();
 
     renderer.render(scene, camera);
 
