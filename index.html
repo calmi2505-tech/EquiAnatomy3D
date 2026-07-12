@@ -10,7 +10,8 @@
     <script type="importmap">
     {
       "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
       }
     }
     </script>
@@ -22,13 +23,12 @@
     <aside id="menu">
         <h2>🐎 EquiAnatomy 3D</h2>
 
-        <button>💀 Sistema óseo</button>
-        <button>💪 Sistema muscular</button>
-        <button>🫁 Sistema respiratorio</button>
-        <button>🍽️ Sistema digestivo</button>
-        <button>❤️ Sistema circulatorio</button>
-        <button>🧠 Sistema nervioso</button>
-        <button>🚻 Sistema reproductor</button>
+        <button id="btnSkeleton">💀 Sistema óseo</button>
+        <button id="btnMuscles">💪 Sistema muscular</button>
+        <button id="btnResp">🫁 Sistema respiratorio</button>
+        <button id="btnDigestive">🍽️ Sistema digestivo</button>
+        <button id="btnCirculatory">❤️ Sistema circulatorio</button>
+        <button id="btnNervous">🧠 Sistema nervioso</button>
     </aside>
 
     <main id="viewer">
