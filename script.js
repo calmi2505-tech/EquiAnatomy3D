@@ -10,91 +10,118 @@ scene.background = new THREE.Color(0x0b1117);
 
 // Cámara
 const camera = new THREE.PerspectiveCamera(
-  60,
-  container.clientWidth / container.clientHeight,
-  0.1,
-  1000
+    45,
+    container.clientWidth / container.clientHeight,
+    0.1,
+    1000
 );
-
-camera.position.set(0, 2, 8);
 
 // Renderizador
 const renderer = new THREE.WebGLRenderer({
-  antialias: true
+    antialias: true
 });
 
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
-container.innerHTML = "";
 container.appendChild(renderer.domElement);
 
 // Luces
-scene.add(new THREE.AmbientLight(0xffffff, 2));
+scene.add(new THREE.AmbientLight(0xffffff, 3));
 
-const light = new THREE.DirectionalLight(0xffffff, 3);
-light.position.set(10,10,10);
-scene.add(light);
+const light1 = new THREE.DirectionalLight(0xffffff, 2);
+light1.position.set(5, 10, 8);
+scene.add(light1);
+
+const light2 = new THREE.DirectionalLight(0xffffff, 2);
+light2.position.set(-5, 5, -8);
+scene.add(light2);
 
 // Controles
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 1;
+controls.maxDistance = 30;
 
-// Loader
+// Cargar caballo
 const loader = new GLTFLoader();
 
 loader.load(
-  "./Horse.glb",
 
-  (gltf)=>{
+    "./Horse.glb?v=3",
 
-      const horse = gltf.scene;
+    (gltf) => {
 
-      // Calcular tamaño
-      const box = new THREE.Box3().setFromObject(horse);
+        const horse = gltf.scene;
 
-      const size = box.getSize(new THREE.Vector3());
+        scene.add(horse);
 
-      const center = box.getCenter(new THREE.Vector3());
+        // Calcular tamaño
+        const box = new THREE.Box3().setFromObject(horse);
 
-      horse.position.sub(center);
+        const size = box.getSize(new THREE.Vector3());
 
-      const maxAxis = Math.max(size.x,size.y,size.z);
+        const center = box.getCenter(new THREE.Vector3());
 
-      horse.scale.multiplyScalar(5/maxAxis);
+        horse.position.x -= center.x;
+        horse.position.y -= center.y;
+        horse.position.z -= center.z;
 
-      scene.add(horse);
+        const maxDimension = Math.max(size.x, size.y, size.z);
 
-      console.log("Horse cargado");
+        const fov = camera.fov * (Math.PI / 180);
 
-  },
+        let cameraZ = Math.abs(maxDimension / 2 / Math.tan(fov / 2));
 
-  undefined,
+        cameraZ *= 1.8;
 
-  (error)=>{
+        camera.position.set(0, maxDimension * 0.3, cameraZ);
 
-      console.error(error);
+        controls.target.set(0, maxDimension * 0.2, 0);
 
-      alert("No se pudo cargar Horse.glb");
+        controls.update();
 
-  }
+        console.log("Horse.glb cargado correctamente");
+
+    },
+
+    (xhr) => {
+
+        if (xhr.total) {
+
+            console.log(
+                Math.round(xhr.loaded / xhr.total * 100) + "%"
+            );
+
+        }
+
+    },
+
+    (error) => {
+
+        console.error(error);
+
+        alert("No se pudo cargar Horse.glb");
+
+    }
 
 );
 
 // Animación
-function animate(){
+function animate() {
 
     requestAnimationFrame(animate);
 
     controls.update();
 
-    renderer.render(scene,camera);
+    renderer.render(scene, camera);
 
 }
 
 animate();
 
-// Resize
-window.addEventListener("resize",()=>{
+// Redimensionar
+window.addEventListener("resize", () => {
 
     camera.aspect =
         container.clientWidth /
