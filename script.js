@@ -1,60 +1,54 @@
-import * as THREE from "three";
-
-const container = document.getElementById("canvas3d");
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x222222);
-
-const camera = new THREE.PerspectiveCamera(
-45,
-container.clientWidth/container.clientHeight,
-0.1,
-1000
-);
-
-camera.position.set(0,2,5);
-
-const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(container.clientWidth,container.clientHeight);
-container.appendChild(renderer.domElement);
-
-// Luces
-scene.add(new THREE.AmbientLight(0xffffff,3));
-
-const light=new THREE.DirectionalLight(0xffffff,3);
-light.position.set(5,10,5);
-scene.add(light);
-
-// Ejes
-const axes=new THREE.AxesHelper(5);
-scene.add(axes);
-
-// Suelo
-const plane=new THREE.Mesh(
-new THREE.PlaneGeometry(20,20),
-new THREE.MeshStandardMaterial({color:0x666666})
-);
-
-plane.rotation.x=-Math.PI/2;
-scene.add(plane);
-
-// Cubo rojo
-const cube=new THREE.Mesh(
-new THREE.BoxGeometry(),
-new THREE.MeshStandardMaterial({color:"red"})
-);
-
-cube.position.y=0.5;
-scene.add(cube);
-
-function animate(){
-
-requestAnimationFrame(animate);
-
-cube.rotation.y+=0.01;
-
-renderer.render(scene,camera);
-
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-animate();
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial, Helvetica, sans-serif;
+    background:#111;
+}
+
+#app{
+    display:flex;
+    width:100vw;
+    height:100vh;
+}
+
+#menu{
+    width:280px;
+    background:#1f2937;
+    color:white;
+    padding:20px;
+}
+
+#menu h2{
+    margin-bottom:20px;
+}
+
+#menu button{
+    display:block;
+    width:100%;
+    margin-bottom:10px;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#374151;
+    color:white;
+}
+
+#viewer{
+    flex:1;
+    width:calc(100vw - 280px);
+    height:100vh;
+    position:relative;
+}
+
+#canvas3d{
+    position:absolute;
+    inset:0;
+    }
