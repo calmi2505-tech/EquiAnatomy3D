@@ -4,128 +4,120 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 const container = document.getElementById("canvas3d");
 
-// Escena
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x202020);
+// ===== Panel de diagnóstico =====
+const info = document.createElement("div");
+info.style.position = "absolute";
+info.style.top = "10px";
+info.style.right = "10px";
+info.style.background = "rgba(0,0,0,.8)";
+info.style.color = "#00ff88";
+info.style.padding = "10px";
+info.style.fontFamily = "monospace";
+info.style.fontSize = "14px";
+info.style.zIndex = "1000";
+info.innerHTML = "Iniciando...";
+document.body.appendChild(info);
 
-// Cámara
+function log(msg){
+    console.log(msg);
+    info.innerHTML += "<br>"+msg;
+}
+
+// ===== Escena =====
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x111111);
+
+// ===== Cámara =====
 const camera = new THREE.PerspectiveCamera(
-    45,
-    (window.innerWidth - 280) / window.innerHeight,
-    0.1,
-    1000
+45,
+container.clientWidth/container.clientHeight,
+0.01,
+5000
 );
 
-camera.position.set(0, 2, 8);
+camera.position.set(0,2,6);
 
-// Renderizador
-const renderer = new THREE.WebGLRenderer({
-    antialias: true
-});
+// ===== Render =====
+const renderer = new THREE.WebGLRenderer({antialias:true});
 
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth - 280, window.innerHeight);
+renderer.setSize(
+container.clientWidth,
+container.clientHeight
+);
 
-container.innerHTML = "";
+container.innerHTML="";
 container.appendChild(renderer.domElement);
 
-// Luces
-scene.add(new THREE.AmbientLight(0xffffff, 2));
+// ===== Luces =====
+scene.add(new THREE.AmbientLight(0xffffff,4));
 
-const light1 = new THREE.DirectionalLight(0xffffff, 3);
-light1.position.set(10, 10, 10);
-scene.add(light1);
+const sun=new THREE.DirectionalLight(0xffffff,5);
+sun.position.set(10,20,10);
+scene.add(sun);
 
-const light2 = new THREE.DirectionalLight(0xffffff, 2);
-light2.position.set(-10, 5, -10);
-scene.add(light2);
+// ===== Ejes =====
+scene.add(new THREE.AxesHelper(3));
 
-// Suelo
-const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(50, 50),
-    new THREE.MeshStandardMaterial({
-        color: 0x555555,
-        side: THREE.DoubleSide
-    })
-);
+// ===== Controles =====
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
 
-floor.rotation.x = -Math.PI / 2;
-scene.add(floor);
+// ===== Loader =====
+log("Buscando Horse.glb...");
 
-// Ejes (solo para pruebas)
-scene.add(new THREE.AxesHelper(5));
-
-// Controles
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.target.set(0, 1, 0);
-
-// Loader
-const loader = new GLTFLoader();
+const loader=new GLTFLoader();
 
 loader.load(
-    "./Horse.glb",
 
-    (gltf) => {
+"./Horse.glb",
 
-        const horse = gltf.scene;
+(gltf)=>{
 
-        // Calcular dimensiones
-        const box = new THREE.Box3().setFromObject(horse);
+log("Modelo cargado");
 
-        const center = box.getCenter(new THREE.Vector3());
+const horse=gltf.scene;
 
-        const size = box.getSize(new THREE.Vector3());
+scene.add(horse);
 
-        horse.position.sub(center);
+horse.position.set(0,0,0);
 
-        const maxSize = Math.max(size.x, size.y, size.z);
+horse.scale.set(1,1,1);
 
-        const scale = 4 / maxSize;
+log("Objetos: "+horse.children.length);
 
-        horse.scale.setScalar(scale);
+},
 
-        scene.add(horse);
+(xhr)=>{
 
-        console.log("Horse cargado correctamente");
+if(xhr.total>0){
 
-    },
+log(
+"Cargando "+
+Math.round(xhr.loaded/xhr.total*100)+"%"
+);
 
-    undefined,
+}
 
-    (error) => {
+},
 
-        console.error(error);
+(error)=>{
 
-        alert("Error cargando Horse.glb");
+log("ERROR");
 
-    }
+console.error(error);
+
+}
 
 );
 
 function animate(){
 
-    requestAnimationFrame(animate);
+requestAnimationFrame(animate);
 
-    controls.update();
+controls.update();
 
-    renderer.render(scene,camera);
+renderer.render(scene,camera);
 
 }
 
 animate();
-
-window.addEventListener("resize",()=>{
-
-    camera.aspect =
-        (window.innerWidth-280) /
-        window.innerHeight;
-
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(
-        window.innerWidth-280,
-        window.innerHeight
-    );
-
-});
