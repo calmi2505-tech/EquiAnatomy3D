@@ -1,41 +1,49 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+const contenedor = document.getElementById("canvas3d");
+
+// Crear escena
 const escena = new THREE.Scene();
 escena.background = new THREE.Color(0x0b1117);
 
+// Cámara
 const camara = new THREE.PerspectiveCamera(
     60,
-    window.innerWidth / window.innerHeight,
+    contenedor.clientWidth / contenedor.clientHeight,
     0.1,
     1000
 );
 
 camara.position.set(0, 2, 6);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+// Renderizador
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
 
+renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(
-    window.innerWidth - 280,
-    window.innerHeight
+    contenedor.clientWidth,
+    contenedor.clientHeight
 );
 
-document
-.getElementById("canvas3d")
-.appendChild(renderer.domElement);
+contenedor.innerHTML = "";
+contenedor.appendChild(renderer.domElement);
 
 // Luces
-const luz1 = new THREE.DirectionalLight(0xffffff, 3);
-luz1.position.set(5, 10, 7);
-escena.add(luz1);
+const luzAmbiente = new THREE.AmbientLight(0xffffff, 2);
+escena.add(luzAmbiente);
 
-const luz2 = new THREE.AmbientLight(0xffffff, 1.5);
-escena.add(luz2);
+const luzDireccional = new THREE.DirectionalLight(0xffffff, 3);
+luzDireccional.position.set(5, 10, 5);
+escena.add(luzDireccional);
 
-// Figura temporal
-const geometria = new THREE.BoxGeometry(2,2,2);
+// Cubo temporal
+const geometria = new THREE.BoxGeometry(2, 2, 2);
+
 const material = new THREE.MeshStandardMaterial({
-    color:0x48d15b
+    color: 0x48d15b
 });
 
 const cubo = new THREE.Mesh(geometria, material);
@@ -49,10 +57,14 @@ const controles = new OrbitControls(
 );
 
 controles.enableDamping = true;
+controles.dampingFactor = 0.05;
 
-function animar(){
+// Animación
+function animar() {
 
     requestAnimationFrame(animar);
+
+    cubo.rotation.y += 0.003;
 
     controles.update();
 
@@ -65,17 +77,18 @@ function animar(){
 
 animar();
 
-window.addEventListener("resize",()=>{
+// Redimensionar
+window.addEventListener("resize", () => {
 
-    camara.aspect=
-        (window.innerWidth-280)/
-        window.innerHeight;
+    camara.aspect =
+        contenedor.clientWidth /
+        contenedor.clientHeight;
 
     camara.updateProjectionMatrix();
 
     renderer.setSize(
-        window.innerWidth-280,
-        window.innerHeight
+        contenedor.clientWidth,
+        contenedor.clientHeight
     );
 
 });
